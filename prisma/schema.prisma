@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Proposal {
+  id                String   @id @default(cuid())
+  title             String
+  type              String   // treasury_spend, contract_change, marketing, emergency, governance
+  subcategory       String
+  description       String
+  amount            Float?
+  linksJson         String   @default("[]")
+  createdBy         String   @default("Brandon")
+  createdAt         DateTime @default(now())
+  deadline          DateTime
+  status            String   @default("pending") // pending, approved, rejected, executed
+  thresholdRequired Int
+  autoRouted        Boolean  @default(false)
+  executedAt        DateTime?
+  multisigTxHash    String?
+
+  votes             GuardianVote[]
+  questions         ProposalQuestion[]
+}
+
+model GuardianVote {
+  id           String   @id @default(cuid())
+  proposalId   String
+  guardianName String
+  vote         String   // approve, reject, needs_info
+  reasoning    String
+  votedAt      DateTime @default(now())
+
+  proposal     Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  @@unique([proposalId, guardianName])
+}
+
+model ProposalQuestion {
+  id         String   @id @default(cuid())
+  proposalId String
+  askedBy    String
+  question   String
+  answer     String?
+  askedAt    DateTime @default(now())
+  answeredAt DateTime?
+
+  proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+}
