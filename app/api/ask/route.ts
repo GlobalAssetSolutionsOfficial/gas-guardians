@@ -58,7 +58,14 @@ async function classifyAndAnswer(question: string): Promise<{ guardian: string; 
         messages: [
           {
             role: 'system',
-            content: `You are a classifier. Given a crypto/blockchain question, respond with ONLY the name of the best Guardian to answer it. Choose from: ${GUARDIANS.map((g) => g.name).join(', ')}. Respond with just the name, nothing else.`,
+            content: `You are a classifier. Given a crypto/blockchain question, respond with ONLY the name of the best Guardian to answer it. Choose from: ${GUARDIANS.map((g) => g.name).join(', ')}.
+
+IMPORTANT TERMINOLOGY:
+- "GAS" (all caps) = Global Asset Solutions (the GASolutions token/project).
+- "gas fee", "gas fees", "transaction fee", or "Ethereum gas" = blockchain network fees.
+If unclear, ask a 1-sentence clarification instead of guessing.
+
+Respond with just the Guardian name, nothing else.`,
           },
           {
             role: 'user',
